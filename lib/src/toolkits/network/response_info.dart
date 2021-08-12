@@ -1,10 +1,10 @@
 class ResponseInfo {
-  String requestId;
-  DateTime timeStamp;
-  int? statusCode;
-  String? statusReason;
-  Map<String, dynamic>? headers;
-  dynamic body;
+  final String requestId;
+  final DateTime timeStamp;
+  final int? statusCode;
+  final String? statusReason;
+  final Map<String, dynamic>? headers;
+  final dynamic body;
 
   ResponseInfo({
     required this.requestId,
@@ -16,16 +16,12 @@ class ResponseInfo {
   });
 
   Map<String, dynamic> toJson() {
-    if (headers == null) {
-      headers = new Map();
-    }
-    
     return {
       'requestId': requestId,
       'timeStamp': timeStamp,
       'statusCode': statusCode,
       'statusReason': statusReason,
-      'headers': headers,
+      'headers': headers ?? Map(),
       'body': body,
     };
   }

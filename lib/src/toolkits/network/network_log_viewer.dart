@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_json_viewer/flutter_json_viewer.dart';
 
-class NetworkLogViewer extends StatelessWidget {
+class NetworkLogViewer extends StatefulWidget {
   final String requestId;
   final RequestInfo requestInfo;
   final ResponseInfo? responseInfo;
@@ -17,6 +17,11 @@ class NetworkLogViewer extends StatelessWidget {
         responseInfo = NetworkLogger.instance.responseLogs[requestId],
         super(key: key);
 
+  @override
+  _NetworkLogViewerState createState() => _NetworkLogViewerState();
+}
+
+class _NetworkLogViewerState extends State<NetworkLogViewer> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -39,62 +44,155 @@ class NetworkLogViewer extends StatelessWidget {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            buildRequest(),
-            buildResponse(),
-          ],
+        body: ListTileTheme(
+          dense: true,
+          child: TabBarView(
+            children: [
+              buildRequest(),
+              buildResponse(),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget buildRequest() {
+    var response = widget.requestInfo;
+    return ListView.separated(
+      itemCount: 3,
+      itemBuilder: (context, index) {
+        return Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: Builder(builder: (context) {
+            var uri = Uri.parse(response.uri);
+
+            switch (index) {
+              case 0:
+                return ExpansionTile(
+                  title: buildHeading('Info'),
+                  children: [
+                    ListTile(
+                      leading: Text(response.method),
+                      title: Text(uri.path),
+                      subtitle: Text(uri.host),
+                    ),
+                    ListTile(
+                      title: Text('Request ID'),
+                      subtitle: Text(response.requestId),
+                    ),
+                    ListTile(
+                      title: Text('Time'),
+                      subtitle: Text(response.timeStamp.toIso8601String()),
+                    ),
+                  ],
+                );
+              case 1:
+                return ExpansionTile(
+                  title: buildHeading('Headers'),
+                  children: [
+                    buildHeaders(response.headers),
+                  ],
+                );
+              case 2:
+                return ExpansionTile(
+                  initiallyExpanded: true,
+                  title: buildHeading('Body'),
+                  children: [
+                    isJsonBody(response.headers)
+                        ? JsonViewer(
+                            jsonDecode(response.body),
+                          )
+                        : Text(response.body),
+                  ],
+                );
+            }
+            return Container();
+          }),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) => Divider(),
+    );
     return SingleChildScrollView(
       padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Headers'),
-          ...requestInfo.headers.entries.map((e) {
-            return Text(e.key + ": " + e.value.toString());
-          }).toList(),
+          buildHeading('Headers'),
+          buildHeaders(widget.requestInfo.headers),
           SizedBox(height: 16),
-          Text('Body'),
-          isJsonBody(requestInfo.headers)
-              ? JsonViewer(
-                  jsonDecode(requestInfo.body),
-                )
-              : Text(requestInfo.body),
+          buildHeading('Body'),
+          isJsonBody(widget.requestInfo.headers)
+              ? JsonViewer(jsonDecode(widget.requestInfo.body))
+              : Text(widget.requestInfo.body),
         ],
       ),
     );
   }
 
   Widget buildResponse() {
-    var response = responseInfo;
+    var response = widget.responseInfo;
     if (response == null) {
-      return Container(
-        child: Text('Response not received'),
-      );
+      return Container(child: Text('Response not received'));
     }
+
     var headers = response.headers;
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Headers'),
-          buildHeaders(headers),
-          SizedBox(height: 16),
-          Text('Body'),
-          isJsonBody(headers)
-              ? JsonViewer(
-                  jsonDecode(response.body),
-                )
-              : Text(response.body),
-        ],
-      ),
+    return ListView.separated(
+      itemCount: 3,
+      itemBuilder: (context, index) {
+        return Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: Builder(builder: (context) {
+            switch (index) {
+              case 0:
+                return ExpansionTile(
+                  title: buildHeading('Info'),
+                  children: [
+                    ListTile(
+                      title: Text('Request ID'),
+                      subtitle: Text(response.requestId),
+                    ),
+                    ListTile(
+                      title: Text('Time'),
+                      subtitle: Text(response.timeStamp.toIso8601String()),
+                    ),
+                    if (response.statusCode != null)
+                      ListTile(
+                        title: Text('Status'),
+                        subtitle: Text(response.statusCode!.toString()),
+                      ),
+                    if (response.statusReason != null)
+                      ListTile(
+                        title: Text('Status Reason'),
+                        subtitle: Text(response.statusReason!),
+                      ),
+                  ],
+                );
+              case 1:
+                return ExpansionTile(
+                  title: buildHeading('Headers'),
+                  children: [
+                    buildHeaders(headers),
+                  ],
+                );
+              case 2:
+                return ExpansionTile(
+                  initiallyExpanded: true,
+                  title: buildHeading('Body'),
+                  children: [
+                    isJsonBody(headers)
+                        ? JsonViewer(
+                            jsonDecode(response.body),
+                          )
+                        : Text(response.body),
+                  ],
+                );
+            }
+            return Container();
+          }),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) => Divider(),
     );
   }
 
@@ -110,9 +208,21 @@ class NetworkLogViewer extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: headers.entries
-          .map((e) => Text(e.key + ": " + e.value.toString()))
-          .toList(),
+      children: headers.entries.map((e) {
+        return ListTile(
+          dense: true,
+          visualDensity: VisualDensity.compact,
+          title: Text(e.key),
+          subtitle: Text(e.value),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget buildHeading(String heading) {
+    return Text(
+      heading,
+      style: Theme.of(context).textTheme.subtitle2,
     );
   }
 }
