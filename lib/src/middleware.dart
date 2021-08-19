@@ -32,8 +32,8 @@ class DevToolKitMiddleware extends MiddlewareClass {
       );
     } catch (e) {
       return ActionDetails(
-        type: action.toString(),
-        payload: {},
+        type: action.runtimeType.toString(),
+        payload: {'asString': action.toString()},
       );
     }
   }
