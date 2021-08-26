@@ -9,7 +9,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
 // One simple action: Increment
-enum Actions { Increment }
+class IncrementAction {}
 
 var rand = Random();
 late Dio dio;
@@ -17,13 +17,12 @@ late Dio dio;
 // The reducer, which takes the previous count and increments it in response
 // to an Increment action.
 AppState counterReducer(AppState state, dynamic action) {
-  if (action == Actions.Increment) {
-    dio.get(
-      'https://jsonplaceholder.typicode.com/todos/' +
-          (state.counter + 1).toString(),
-    );
+  if (action is IncrementAction) {
+    var id = state.counter + 1;
+    dio.get('https://jsonplaceholder.typicode.com/todos/$id');
+
     return AppState(
-      state.counter + 1,
+      id,
       rand.nextBool() ? state.randomState1 : rand.nextInt(50),
       rand.nextBool() ? state.randomState2 : rand.nextInt(100),
     );
@@ -32,10 +31,12 @@ AppState counterReducer(AppState state, dynamic action) {
   return state;
 }
 
-void main() {
+void main() async {
   // Create your store as a final variable in the main function or inside a
   // State object. This works better with Hot Reload than creating it directly
   // in the `build` function.
+
+  await DevToolkit.init('172.20.10.5');
   HttpOverrides.global = NetworkToolkitHttpOverrides();
   dio = Dio();
   final store = Store<AppState>(
@@ -74,7 +75,6 @@ class FlutterReduxApp extends StatelessWidget {
         theme: ThemeData(),
         title: title,
         home: Scaffold(
-          drawer: DevToolkit(),
           appBar: AppBar(
             title: Text(title),
           ),
@@ -117,7 +117,7 @@ class FlutterReduxApp extends StatelessWidget {
               // Return a `VoidCallback`, which is a fancy name for a function
               // with no parameters and no return value.
               // It only dispatches an Increment action.
-              return () => store.dispatch(Actions.Increment);
+              return () => store.dispatch(IncrementAction());
             },
             builder: (context, callback) {
               return FloatingActionButton(

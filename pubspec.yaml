@@ -8,11 +8,9 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  pretty_diff_text: ^1.0.0
   uuid: ^3.0.4
   flutter_redux: ^0.8.2
   redux: ^5.0.0
-  flutter_json_viewer: ^1.0.1
   flutter:
     sdk: flutter
 
