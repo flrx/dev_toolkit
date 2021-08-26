@@ -56,21 +56,18 @@ class ReduxLogViewer extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          Row(
-            children: [
-              Text('Type: '),
-              Text(
-                log.action.type,
-                maxLines: 10,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+          ListTile(
+            title: Text('Type'),
+            subtitle: Text(
+              log.action.type,
+              maxLines: 10,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          Row(
-            children: [
-              Text('Payload: '),
-              Text(log.action.payload.toString()),
-            ],
+          Divider(),
+          ListTile(
+            title: Text('Payload'),
+            subtitle: JsonViewer(log.action.payload),
           ),
         ],
       ),

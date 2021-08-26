@@ -27,7 +27,9 @@ class DevToolkit {
       'details': info,
     };
 
-    await createClient();
+    if (_client == null) {
+      await createClient();
+    }
 
     _client?.add(jsonEncode(infoToSend));
   }

@@ -24,19 +24,25 @@ class NetworkToolkit extends StatelessWidget {
   }
 
   Card buildLogCard(
-      MapEntry<String, RequestInfo> log, Uri uri, BuildContext context) {
+    MapEntry<String, RequestInfo> log,
+    Uri uri,
+    BuildContext context,
+  ) {
     return Card(
+      key: Key(log.key),
       child: ListTile(
         leading: Text(log.value.method),
         title: Text(uri.path),
         subtitle: Row(
           children: [
             Expanded(child: Text(uri.host)),
-            Text(DateTime.now()
-                    .difference(log.value.timeStamp)
-                    .inMinutes
-                    .toString() +
-                ' Minutes ago')
+            Text(
+              DateTime.now()
+                      .difference(log.value.timeStamp)
+                      .inMinutes
+                      .toString() +
+                  ' Minutes ago',
+            )
           ],
         ),
         onTap: () {
