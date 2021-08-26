@@ -13,6 +13,7 @@ dependencies:
   redux: ^5.0.0
   flutter:
     sdk: flutter
+  multicast_dns: ^0.3.0+1
 
 dev_dependencies:
   flutter_test:

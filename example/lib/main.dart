@@ -36,7 +36,7 @@ void main() async {
   // State object. This works better with Hot Reload than creating it directly
   // in the `build` function.
 
-  await DevToolkit.init('172.20.10.5');
+  await DevToolkit.init();
   HttpOverrides.global = NetworkToolkitHttpOverrides();
   dio = Dio();
   final store = Store<AppState>(
