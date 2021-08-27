@@ -1,21 +1,24 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:multicast_dns/multicast_dns.dart';
+
+import 'package:dev_toolkit/src/discovery_service.dart';
 
 class DevToolkit {
   static WebSocket? _client;
-  static final MDnsClient _mdnsClient = MDnsClient();
+  static const _defaultPingInterval = const Duration(seconds: 5);
+  static late DiscoveryService _discoveryService;
+  static late Timer timer;
 
-  static Future<void> init() async {
-    const String name = '_dev-toolkit._tcp';
+  static Future<void> init({
+    String? ipAddress,
+    Duration pingInterval = _defaultPingInterval,
+  }) async {
+    if (ipAddress != null) {
+      await createClient(ipAddress);
+    }
 
-    // Start the client with default options.
-    await DevToolkit._mdnsClient.start();
-    var ptrQuery = ResourceRecordQuery.serverPointer(name);
-    var ptrRecordStream =
-        DevToolkit._mdnsClient.lookup<PtrResourceRecord>(ptrQuery);
-    await ptrRecordStream.forEach(DevToolkit.onPtrFound);
-    DevToolkit._mdnsClient.stop();
+    startToolkitDiscovery(pingInterval);
   }
 
   static Future<void> createClient(String _ipAddress) async {
@@ -26,46 +29,35 @@ class DevToolkit {
         print(error);
       });
     } catch (e) {
-      print(e);
       // Do Nothing
+      print(e);
     }
   }
 
-  static Future<void> onPtrFound(PtrResourceRecord ptr) async {
-    var srvQuery = ResourceRecordQuery.service(ptr.domainName);
-    var serviceRecordStream = _mdnsClient.lookup<SrvResourceRecord>(srvQuery);
-    await serviceRecordStream.forEach(onSrvFound);
-  }
+  static Future<void> startToolkitDiscovery(Duration pingInterval) async {
+    var serviceName = '_dev-toolkit._tcp';
+    _discoveryService = DiscoveryService(
+      serviceName: serviceName,
+      onServiceFound: (String ipAddress, int port) {
+        var ip = InternetAddress(ipAddress);
+        if (ip.type == InternetAddressType.IPv6) {
+          print(
+            'IPV6 Cannot connect to websocket right now, Skipping ${ip.address}',
+          );
+          return;
+        }
 
-  static Future<void> onSrvFound(SrvResourceRecord srv) async {
-    var ipv4Query = ResourceRecordQuery.addressIPv4(srv.target);
-    var ipv4RecordStream =
-        _mdnsClient.lookup<IPAddressResourceRecord>(ipv4Query);
-    await ipv4RecordStream.forEach((ip) => onIpFound(srv, ip));
-
-    var ipv6Query = ResourceRecordQuery.addressIPv6(srv.target);
-    var ipv6RecordStream =
-        _mdnsClient.lookup<IPAddressResourceRecord>(ipv6Query);
-    await ipv6RecordStream.forEach((ip) async => await onIpFound(srv, ip));
-  }
-
-  static Future<void> onIpFound(
-    SrvResourceRecord srv,
-    IPAddressResourceRecord ipRecord,
-  ) async {
-    var ip = ipRecord.address;
-    print(
-      'Service instance found at ${srv.target}:${srv.port} with $ip.',
+        createClient(ipAddress);
+      },
     );
 
-    if (ip.type == InternetAddressType.IPv6) {
-      print(
-          'IPV6 Cannot connect to websocket right now, Skipping ${ip.address}');
-      return;
-    }
-    if (_client == null) {
-      await createClient(ip.address);
-    }
+    timer = Timer.periodic(pingInterval, (timer) async {
+      if (!timer.isActive) {
+        return;
+      }
+
+      _discoveryService.performLookup();
+    });
   }
 
   static void sendInfo(String pluginId, Map<String, dynamic> info) async {
@@ -79,5 +71,11 @@ class DevToolkit {
     }
 
     _client?.add(jsonEncode(infoToSend));
+  }
+
+  static void stop() {
+    timer.cancel();
+    _client?.close();
+    _discoveryService.cancel();
   }
 }

@@ -14,24 +14,18 @@ class ServerManager {
       "Server is running on 'http://${server.address.address}:$port/'",
     );
 
-    var message = '_dev-toolkit._tcp.';
+    var message = '_dev-toolkit._tcp';
     var title = "DevToolkit";
 
-    var list = await NetworkInterface.list();
-
-    list.forEach((interface) {
-      interface.addresses.forEach((address) {
-        AdvertiseService(
-          targetIP: "224.0.0.1",
-          targetPort: port,
-          title: title,
-          multicastMessage: message,
-          onPeerFound: (targetIp, targetHost) {
-            print("Peer Found: $targetIp:$targetHost");
-          },
-        ).advertise();
-      });
-    });
+    AdvertiseService(
+      targetIP: "224.0.0.1",
+      targetPort: port,
+      title: title,
+      multicastMessage: message,
+      onPeerFound: (targetIp, targetHost) {
+        print("Peer Found: $targetIp:$targetHost");
+      },
+    ).advertise();
 
     server.transform(WebSocketTransformer()).listen(responseManger.onRequest);
   }
