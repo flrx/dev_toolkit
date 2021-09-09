@@ -28,113 +28,99 @@ class NetworkToolkitClient implements HttpClient {
 
   @override
   Future<HttpClientRequest> open(
-      String method, String host, int port, String path) {
-    return withInterceptor(client!.open(method, host, port, path));
-  }
+    String method,
+    String host,
+    int port,
+    String path,
+  ) =>
+      withInterceptor(client!.open(method, host, port, path));
 
   @override
-  Future<HttpClientRequest> openUrl(String method, Uri url) {
-    return withInterceptor(client!.openUrl(method, url));
-  }
+  Future<HttpClientRequest> openUrl(String method, Uri url) =>
+      withInterceptor(client!.openUrl(method, url));
 
   @override
-  Future<HttpClientRequest> get(String host, int port, String path) {
-    return open('get', host, port, path);
-  }
+  Future<HttpClientRequest> get(String host, int port, String path) =>
+      open('get', host, port, path);
 
   @override
-  Future<HttpClientRequest> getUrl(Uri url) {
-    return openUrl('get', url);
-  }
+  Future<HttpClientRequest> getUrl(Uri url) => openUrl('get', url);
 
   @override
-  Future<HttpClientRequest> post(String host, int port, String path) {
-    return open('post', host, port, path);
-  }
+  Future<HttpClientRequest> post(String host, int port, String path) =>
+      open('post', host, port, path);
 
   @override
-  Future<HttpClientRequest> postUrl(Uri url) {
-    return openUrl('post', url);
-  }
+  Future<HttpClientRequest> postUrl(Uri url) => openUrl('post', url);
 
   @override
-  Future<HttpClientRequest> put(String host, int port, String path) {
-    return open('put', host, port, path);
-  }
+  Future<HttpClientRequest> put(String host, int port, String path) =>
+      open('put', host, port, path);
 
   @override
-  Future<HttpClientRequest> putUrl(Uri url) {
-    return openUrl('put', url);
-  }
+  Future<HttpClientRequest> putUrl(Uri url) => openUrl('put', url);
 
   @override
-  Future<HttpClientRequest> delete(String host, int port, String path) {
-    return open('delete', host, port, path);
-  }
+  Future<HttpClientRequest> delete(String host, int port, String path) =>
+      open('delete', host, port, path);
 
   @override
-  Future<HttpClientRequest> deleteUrl(Uri url) {
-    return openUrl('delete', url);
-  }
+  Future<HttpClientRequest> deleteUrl(Uri url) => openUrl('delete', url);
 
   @override
-  Future<HttpClientRequest> patch(String host, int port, String path) {
-    return open('patch', host, port, path);
-  }
+  Future<HttpClientRequest> patch(String host, int port, String path) =>
+      open('patch', host, port, path);
 
   @override
-  Future<HttpClientRequest> patchUrl(Uri url) {
-    return openUrl('patch', url);
-  }
+  Future<HttpClientRequest> patchUrl(Uri url) => openUrl('patch', url);
 
   @override
-  Future<HttpClientRequest> head(String host, int port, String path) {
-    return open('head', host, port, path);
-  }
+  Future<HttpClientRequest> head(String host, int port, String path) =>
+      open('head', host, port, path);
 
   @override
-  Future<HttpClientRequest> headUrl(Uri url) {
-    return openUrl('head', url);
-  }
+  Future<HttpClientRequest> headUrl(Uri url) => openUrl('head', url);
 
   @override
-  set authenticate(Future<bool> f(Uri url, String scheme, String realm?)?) {
-    client!.authenticate = f;
-  }
+  set authenticate(
+    Future<bool> f(Uri url, String scheme, String? realm)?,
+  ) =>
+      client!.authenticate = f;
 
   @override
   void addCredentials(
-      Uri url, String realm, HttpClientCredentials credentials) {
-    client!.addCredentials(url, realm, credentials);
-  }
+    Uri url,
+    String realm,
+    HttpClientCredentials credentials,
+  ) =>
+      client!.addCredentials(url, realm, credentials);
 
   @override
-  set findProxy(String f(Uri url)?) {
-    client!.findProxy = f;
-  }
+  set findProxy(String f(Uri url)?) => client!.findProxy = f;
 
   @override
   set authenticateProxy(
-      Future<bool> f(String host, int port, String scheme, String realm?)?) {
-    client!.authenticateProxy = f;
-  }
+    Future<bool> f(String host, int port, String scheme, String? realm)?,
+  ) =>
+      client!.authenticateProxy = f;
 
   @override
   void addProxyCredentials(
-      String host, int port, String realm, HttpClientCredentials credentials) {
-    client!.addProxyCredentials(host, port, realm, credentials);
-  }
+    String host,
+    int port,
+    String realm,
+    HttpClientCredentials credentials,
+  ) =>
+      client!.addProxyCredentials(host, port, realm, credentials);
 
   @override
   set badCertificateCallback(
-      bool callback(X509Certificate cert, String host, int port)?) {
-    client!.badCertificateCallback = callback;
-  }
+    bool callback(X509Certificate cert, String host, int port)?,
+  ) =>
+      client!.badCertificateCallback = callback;
 
   @override
-  void close({bool force: false}) {
-    client!.close(force: force);
-  }
+  void close({bool force: false}) => client!.close(force: force);
 
   Future<NetworkToolkitHttpClientRequest> withInterceptor(
     Future<HttpClientRequest> future,
