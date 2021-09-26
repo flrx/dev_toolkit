@@ -14,8 +14,10 @@ class ServerApp extends StatelessWidget {
       themeMode: ThemeMode.light,
       darkTheme: MacosThemeData.dark(),
       theme: MacosThemeData.light(),
-      // theme: ThemeData(primarySwatch: Colors.blue),
       home: VRouter(
+        themeMode: ThemeMode.light,
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
         routes: [
           VNester(
             path: '/',

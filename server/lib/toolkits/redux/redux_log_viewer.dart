@@ -19,7 +19,7 @@ class ReduxLogViewer extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: TabBar(
-          labelColor: Colors.black,
+          labelColor: Theme.of(context).textTheme.bodyText1?.color,
           tabs: [
             Container(
               height: kToolbarHeight * 0.7,
@@ -50,25 +50,23 @@ class ReduxLogViewer extends StatelessWidget {
   }
 
   Widget buildAction() {
-    return Padding(
+    return ListView(
       padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text('Type'),
-            subtitle: Text(
-              log.action.type,
-              maxLines: 10,
-              overflow: TextOverflow.ellipsis,
-            ),
+      children: [
+        ListTile(
+          title: Text('Type'),
+          subtitle: Text(
+            log.action.type,
+            maxLines: 10,
+            overflow: TextOverflow.ellipsis,
           ),
-          Divider(),
-          ListTile(
-            title: Text('Payload'),
-            subtitle: JsonViewer(log.action.payload),
-          ),
-        ],
-      ),
+        ),
+        Divider(),
+        ListTile(
+          title: Text('Payload'),
+          subtitle: JsonViewer(log.action.payload),
+        ),
+      ],
     );
   }
 
@@ -102,16 +100,17 @@ class ReduxLogViewer extends StatelessWidget {
 
   Widget buildStateSplit(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(8.0),
             child: buildStateAsJson(log.oldState),
           ),
         ),
         VerticalDivider(),
         Expanded(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(8.0),
             child: buildStateAsJson(log.newState),
           ),

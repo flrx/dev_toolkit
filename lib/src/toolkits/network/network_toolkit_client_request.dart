@@ -8,7 +8,7 @@ import 'package:dev_toolkit/src/toolkits/network/network_toolkit_client_response
 class NetworkToolkitHttpClientRequest implements HttpClientRequest {
   final String uniqueId;
   final HttpClientRequest request;
-  StreamController<List<int>> streamController = new StreamController();
+  StreamController<List<int>> streamController = StreamController();
 
   NetworkToolkitHttpClientRequest(this.uniqueId, this.request);
 
@@ -130,7 +130,7 @@ class NetworkToolkitHttpClientRequest implements HttpClientRequest {
     HttpClientResponse response,
   ) async {
     NetworkToolkitHttpClientResponse responseWithInterceptor =
-        new NetworkToolkitHttpClientResponse(this.uniqueId, response);
+        NetworkToolkitHttpClientResponse(this.uniqueId, response);
 
     return responseWithInterceptor;
   }
@@ -139,7 +139,7 @@ class NetworkToolkitHttpClientRequest implements HttpClientRequest {
     String uniqueId,
     HttpClientRequest request,
   ) async {
-    Map<String, dynamic> headers = new Map();
+    Map<String, dynamic> headers = Map();
     request.headers.forEach((String name, List<String>? values) {
       if (values != null && values.length > 0) {
         headers.putIfAbsent(

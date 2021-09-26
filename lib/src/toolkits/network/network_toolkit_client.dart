@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 class NetworkToolkitClient implements HttpClient {
   final HttpClient? client;
 
-  Uuid _uuid = new Uuid();
+  Uuid _uuid = Uuid();
 
   NetworkToolkitClient(this.client);
 
@@ -120,7 +120,7 @@ class NetworkToolkitClient implements HttpClient {
       client!.badCertificateCallback = callback;
 
   @override
-  void close({bool force: false}) => client!.close(force: force);
+  void close({bool force = false}) => client!.close(force: force);
 
   Future<NetworkToolkitHttpClientRequest> withInterceptor(
     Future<HttpClientRequest> future,
@@ -128,7 +128,7 @@ class NetworkToolkitClient implements HttpClient {
     var request = await future;
 
     NetworkToolkitHttpClientRequest requestWithInterceptor =
-        new NetworkToolkitHttpClientRequest(_uuid.v4(), request);
+        NetworkToolkitHttpClientRequest(_uuid.v4(), request);
     return requestWithInterceptor;
   }
 }

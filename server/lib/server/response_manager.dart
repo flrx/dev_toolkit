@@ -38,7 +38,6 @@ class ResponseManager {
     try {
       var response = await plugin.handleBody(event);
       socket.add(jsonEncode(response));
-
     } catch (e) {
       socket.addError(e.toString());
     }

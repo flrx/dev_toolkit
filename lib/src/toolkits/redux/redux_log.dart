@@ -14,12 +14,21 @@ class ReduxLog {
 
 class ActionDetails {
   final String type;
-  final Map<String, dynamic> payload;
+  final dynamic payload;
+  final dynamic error;
+  final dynamic meta;
 
-  ActionDetails({required this.type, required this.payload});
+  ActionDetails({
+    required this.type,
+    required this.payload,
+    required this.error,
+    required this.meta,
+  });
 
   Map<String, dynamic> toJson() => {
         'type': type,
         'payload': payload,
+        'meta': meta,
+        'error': error,
       };
 }

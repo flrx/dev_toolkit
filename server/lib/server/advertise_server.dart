@@ -95,9 +95,7 @@ class AdvertiseService {
     var address = InternetAddress(targetIP);
 
     /// sends data to multicast address
-    var bytesSent =
-        rawDatagramSocket.send(multicastMessage.codeUnits, address, targetPort);
-    print(bytesSent);
+    rawDatagramSocket.send(multicastMessage.codeUnits, address, targetPort);
   }
 }
 

@@ -22,6 +22,8 @@ class ReduxInspectorPlugin extends Plugin {
       action: ActionDetails(
         payload: details['action']['payload'],
         type: details['action']['type'],
+        meta: details['action']['meta'],
+        error: details['action']['error'],
       ),
       oldState: details['oldState'],
       newState: details['newState'],

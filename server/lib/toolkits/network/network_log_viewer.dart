@@ -28,7 +28,7 @@ class _NetworkLogViewerState extends State<NetworkLogViewer> {
       length: 2,
       child: Scaffold(
         appBar: TabBar(
-          labelColor: Colors.black,
+          labelColor: Theme.of(context).textTheme.bodyText1?.color,
           tabs: [
             Container(
               height: kToolbarHeight * 0.7,

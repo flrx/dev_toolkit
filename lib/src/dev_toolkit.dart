@@ -6,7 +6,7 @@ import 'package:dev_toolkit/src/discovery_service.dart';
 
 class DevToolkit {
   static WebSocket? _client;
-  static const _defaultPingInterval = const Duration(seconds: 5);
+  static const _defaultPingInterval = Duration(seconds: 5);
   static late DiscoveryService _discoveryService;
   static late Timer timer;
 

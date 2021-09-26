@@ -63,7 +63,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.2"
+    version: "0.0.3"
   dio:
     dependency: "direct main"
     description:
@@ -122,7 +122,7 @@ packages:
       name: multicast_dns
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.0+1"
+    version: "0.3.1"
   path:
     dependency: transitive
     description:

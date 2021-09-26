@@ -9,7 +9,7 @@ class NetworkToolkitHttpClientResponse extends Stream<List<int>>
   final String uniqueId;
   final HttpClientResponse response;
 
-  StreamController<List<int>> streamController = new StreamController();
+  StreamController<List<int>> streamController = StreamController();
 
   NetworkToolkitHttpClientResponse(this.uniqueId, this.response);
 
@@ -82,7 +82,7 @@ class NetworkToolkitHttpClientResponse extends Stream<List<int>>
   int get statusCode => response.statusCode;
 
   Future<bool> _reportResponse(String uniqueId) async {
-    Map<String, dynamic> headers = new Map();
+    Map<String, dynamic> headers = Map();
     response.headers.forEach((String name, List<String>? values) {
       if (values != null && values.length > 0) {
         headers.putIfAbsent(

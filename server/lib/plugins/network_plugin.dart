@@ -20,15 +20,13 @@ class NetworkPlugin extends Plugin {
     Map<String, dynamic> requestBody,
   ) async {
     var details = requestBody['details'];
-    /**
-        "requestId": uniqueId,
-        "timeStamp": DateTime.now().toIso8601String(),
-        "uri": '${request.uri}',
-        "headers": headers,
-        "method": request.method,
-        "body": body,
-        "type": "request",
-     */
+    /// "requestId": uniqueId,
+    /// "timeStamp": DateTime.now().toIso8601String(),
+    /// "uri": '${request.uri}',
+    /// "headers": headers,
+    /// "method": request.method,
+    /// "body": body,
+    /// "type": "request",
     details['type'] == 'request'
         ? createRequestAndAdd(details)
         : createResponseAndAdd(details);
