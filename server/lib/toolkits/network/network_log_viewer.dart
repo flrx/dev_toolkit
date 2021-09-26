@@ -27,22 +27,20 @@ class _NetworkLogViewerState extends State<NetworkLogViewer> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Network Request'),
-          bottom: TabBar(
-            tabs: [
-              Container(
-                height: kToolbarHeight * 0.7,
-                alignment: Alignment.center,
-                child: Text('Request'),
-              ),
-              Container(
-                height: kToolbarHeight * 0.7,
-                alignment: Alignment.center,
-                child: Text('Response'),
-              ),
-            ],
-          ),
+        appBar: TabBar(
+          labelColor: Colors.black,
+          tabs: [
+            Container(
+              height: kToolbarHeight * 0.7,
+              alignment: Alignment.center,
+              child: Text('Request'),
+            ),
+            Container(
+              height: kToolbarHeight * 0.7,
+              alignment: Alignment.center,
+              child: Text('Response'),
+            ),
+          ],
         ),
         body: ListTileTheme(
           dense: true,

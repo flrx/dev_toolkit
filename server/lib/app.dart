@@ -1,23 +1,41 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:server/toolkits/network/network_toolkit.dart';
 import 'package:server/toolkits/redux/redux_toolkit.dart';
+import 'package:vrouter/vrouter.dart';
 
 class ServerApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MacosApp(
       title: 'Dev Toolkit Server',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomePage(),
+      themeMode: ThemeMode.light,
+      darkTheme: MacosThemeData.dark(),
+      theme: MacosThemeData.light(),
+      // theme: ThemeData(primarySwatch: Colors.blue),
+      home: VRouter(
+        routes: [
+          VNester(
+            path: '/',
+            widgetBuilder: (child) => HomePage(child),
+            nestedRoutes: [
+              VWidget(path: null, widget: Container()),
+              VWidget(path: 'redux', widget: ReduxToolkit()),
+              VWidget(path: 'network', widget: NetworkToolkit()),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final Widget child;
+
+  const HomePage(this.child, {Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -29,80 +47,62 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
+    var sidebarItems = {
+      'Redux Inspector': Icons.account_balance_wallet,
+      'Network Inspector': Icons.account_balance_wallet,
+    };
+    return MacosWindow(
+      sidebar: Sidebar(
+        builder: (context, scrollController) {
+          return SidebarItems(
+            currentIndex: index,
+            onChanged: (newIndex) => onSidebarClicked(newIndex, context),
+            items: sidebarItems.entries.map((e) {
+              return SidebarItem(label: Text(e.key), leading: Icon(e.value));
+            }).toList(),
+          );
+        },
+        isResizable: true,
+        minWidth: 240,
+        bottom: HelpButton(onPressed: () => showNetworkInterfaces(context)),
+      ),
+      child: MacosScaffold(
         children: [
-          NavigationRail(
-            extended: isRailExpanded,
-            elevation: 8,
-            leading: IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {
-                setState(() {
-                  isRailExpanded = !isRailExpanded;
-                });
-              },
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.info_outline),
-              onPressed: () => showNetworkInterfaces(context),
-            ),
-            onDestinationSelected: (newIndex) {
-              setState(() => index = newIndex);
-            },
-            destinations: [
-              NavigationRailDestination(
-                icon: Icon(Icons.account_balance_wallet),
-                label: Text('Redux Inspector'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.network_check_outlined),
-                label: Text('Network Inspector'),
-              ),
-            ],
-            selectedIndex: index,
-          ),
-          VerticalDivider(color: Colors.transparent),
-          Expanded(
-            child: IndexedStack(
-              index: index,
-              children: [
-                ReduxToolkit(),
-                NetworkToolkit(),
-              ],
-            ),
-          )
+          ContentArea(builder: (context, scrollController) {
+            return widget.child;
+          }),
         ],
       ),
     );
   }
 
+  void onSidebarClicked(int newIndex, BuildContext context) {
+    var route = ['/redux', '/network'][newIndex];
+    context.vRouter.to(route);
+    setState(() => index = newIndex);
+  }
+
   Future<void> showNetworkInterfaces(BuildContext context) async {
     var list = await NetworkInterface.list();
-
     showDialog(
         context: context,
         builder: (context) {
-          return Dialog(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Connect using any of the following IP Addresses in the Same Network',
-                    style: Theme.of(context).textTheme.subtitle2,
-                  ),
-                  SizedBox(height: 16),
-                  ...getInterfacesListWidgets(list),
-                  SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text('Ok'),
-                  ),
-                ],
-              ),
+          return MacosAlertDialog(
+            appIcon: FlutterLogo(),
+            primaryButton: PushButton(
+              onPressed: () => Navigator.pop(context),
+              buttonSize: ButtonSize.small,
+              child: Text('Ok'),
+            ),
+            title: Text(
+              'Connect using any of the following IP Addresses in the Same Network',
+            ),
+            message: Column(
+              children: [
+                SizedBox(height: 16),
+                ...getInterfacesListWidgets(list),
+                SizedBox(height: 16),
+              ],
             ),
           );
         });

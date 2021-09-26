@@ -1,25 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:server/plugins/network_plugin.dart';
 import 'package:server/toolkits/network/network_log_viewer.dart';
 import 'package:server/toolkits/network/request_info.dart';
 
-class NetworkToolkit extends StatelessWidget {
+class NetworkToolkit extends StatefulWidget {
+  @override
+  State<NetworkToolkit> createState() => _NetworkToolkitState();
+}
+
+class _NetworkToolkitState extends State<NetworkToolkit> {
+  MapEntry<String, RequestInfo>? selectedLog;
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<Map<String, RequestInfo>>(
-      stream: NetworkPlugin.logsStream,
-      initialData: NetworkPlugin.requestLogs,
-      builder: (context, snapshot) {
-        return ListView.builder(
-          itemCount: snapshot.requireData.length,
-          itemBuilder: (context, index) {
-            var log =
-                snapshot.requireData.entries.toList().reversed.elementAt(index);
-            var uri = Uri.parse(log.value.uri);
-            return buildLogCard(log, uri, context);
-          },
-        );
-      },
+    return MacosScaffold(
+      titleBar: TitleBar(
+        title: Text(selectedLog?.key ?? 'Network Inspector'),
+      ),
+      children: [
+        ContentArea(builder: (context, scrollController) {
+          return StreamBuilder<Map<String, RequestInfo>>(
+            stream: NetworkPlugin.logsStream,
+            initialData: NetworkPlugin.requestLogs,
+            builder: (context, snapshot) {
+              return ListView.builder(
+                itemCount: snapshot.requireData.length,
+                itemBuilder: (context, index) {
+                  var log = snapshot.requireData.entries
+                      .toList()
+                      .reversed
+                      .elementAt(index);
+                  var uri = Uri.parse(log.value.uri);
+                  return buildLogCard(log, uri, context);
+                },
+              );
+            },
+          );
+        }),
+        if (selectedLog != null)
+          ResizablePane(
+            resizableSide: ResizableSide.left,
+            builder: (context, scrollController) {
+              if (selectedLog == null) return Container();
+              return NetworkLogViewer(requestId: selectedLog!.key);
+            },
+            isResizable: true,
+            maxWidth: 800,
+            startWidth: 400,
+            minWidth: 400,
+          )
+      ],
     );
   }
 
@@ -45,11 +76,7 @@ class NetworkToolkit extends StatelessWidget {
             )
           ],
         ),
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return NetworkLogViewer(requestId: log.key);
-          }));
-        },
+        onTap: () => setState(() => selectedLog = log),
       ),
     );
   }

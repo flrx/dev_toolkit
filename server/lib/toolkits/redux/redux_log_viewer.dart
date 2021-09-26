@@ -18,27 +18,25 @@ class ReduxLogViewer extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(log.action.type),
-          bottom: TabBar(
-            tabs: [
-              Container(
-                height: kToolbarHeight * 0.7,
-                alignment: Alignment.center,
-                child: Text('Action'),
-              ),
-              Container(
-                height: kToolbarHeight * 0.7,
-                alignment: Alignment.center,
-                child: Text('State Diff'),
-              ),
-              Container(
-                height: kToolbarHeight * 0.7,
-                alignment: Alignment.center,
-                child: Text('State Split'),
-              ),
-            ],
-          ),
+        appBar: TabBar(
+          labelColor: Colors.black,
+          tabs: [
+            Container(
+              height: kToolbarHeight * 0.7,
+              alignment: Alignment.center,
+              child: Text('Action'),
+            ),
+            Container(
+              height: kToolbarHeight * 0.7,
+              alignment: Alignment.center,
+              child: Text('State Diff'),
+            ),
+            Container(
+              height: kToolbarHeight * 0.7,
+              alignment: Alignment.center,
+              child: Text('State Split'),
+            ),
+          ],
         ),
         body: TabBarView(
           children: [
