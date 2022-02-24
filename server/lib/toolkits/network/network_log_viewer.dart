@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_json_viewer/flutter_json_viewer.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:server/plugins/network_plugin.dart';
 import 'package:server/toolkits/network/request_info.dart';
 import 'package:server/toolkits/network/response_info.dart';

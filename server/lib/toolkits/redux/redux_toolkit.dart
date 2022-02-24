@@ -25,18 +25,22 @@ class _ReduxToolkitState extends State<ReduxToolkit> {
                 stream: ReduxInspectorPlugin.logsStream,
                 initialData: ReduxInspectorPlugin.logs,
                 builder: (context, snapshot) {
-                  return ListView.builder(
-                    itemCount: snapshot.requireData.length,
-                    itemBuilder: (context, index) {
-                      ReduxLog log = snapshot.requireData[index];
-                      return Card(
-                        child: ListTile(
+                  return Material(
+                    child: ListView.separated(
+                      controller: scrollController,
+                      itemCount: snapshot.requireData.length,
+                      itemBuilder: (context, index) {
+                        ReduxLog log = snapshot.requireData[index];
+                        return ListTile(
                           title: Text(log.action.type),
                           subtitle: Text(log.timeOfAction.toIso8601String()),
                           onTap: () => setState(() => selectedLog = log),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Divider(height: 1);
+                      },
+                    ),
                   );
                 });
           },

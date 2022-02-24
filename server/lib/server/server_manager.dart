@@ -25,7 +25,9 @@ class ServerManager {
       onPeerFound: (targetIp, targetHost) {
         print("Peer Found: $targetIp:$targetHost");
       },
-    ).advertise();
+    ).advertise().then((_) {
+
+    });
 
     server.transform(WebSocketTransformer()).listen(responseManger.onRequest);
   }

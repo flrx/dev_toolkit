@@ -25,7 +25,7 @@ class AdvertiseService {
     required this.title,
   });
 
-  void advertise() async {
+  Future<void> advertise() async {
     /// Maybe?
     if (kIsWeb) {
       return advertiseUsingRawDatagram();
@@ -84,7 +84,7 @@ class AdvertiseService {
   stopService() async {
     timer.cancel();
     rawDatagramSocket.close();
-    (await process)?.kill();
+    process?.kill();
   }
 
   void onTimerEvent(Timer timer) {

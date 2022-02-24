@@ -6,5 +6,5 @@ Dev Toolkit
 
 ## Roadmap
 - [ ] Generalize for Dart only
-- [ ] Make Dns discovery more robust
+- [ ] Make DNS discovery more robust
 - [ ] Add DNS discovery for all platforms

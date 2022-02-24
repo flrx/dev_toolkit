@@ -24,16 +24,22 @@ class _NetworkToolkitState extends State<NetworkToolkit> {
             stream: NetworkPlugin.logsStream,
             initialData: NetworkPlugin.requestLogs,
             builder: (context, snapshot) {
-              return ListView.builder(
-                itemCount: snapshot.requireData.length,
-                itemBuilder: (context, index) {
-                  var log = snapshot.requireData.entries
-                      .toList()
-                      .reversed
-                      .elementAt(index);
-                  var uri = Uri.parse(log.value.uri);
-                  return buildLogCard(log, uri, context);
-                },
+              return Material(
+                child: ListView.separated(
+                  controller: scrollController,
+                  itemCount: snapshot.requireData.length,
+                  itemBuilder: (context, index) {
+                    var log = snapshot.requireData.entries
+                        .toList()
+                        .reversed
+                        .elementAt(index);
+                    var uri = Uri.parse(log.value.uri);
+
+                    return buildLogCard(log, uri, context);
+                  },
+                  separatorBuilder: (BuildContext context, int index) =>
+                      Divider(height: 1),
+                ),
               );
             },
           );
@@ -54,30 +60,21 @@ class _NetworkToolkitState extends State<NetworkToolkit> {
     );
   }
 
-  Card buildLogCard(
+  Widget buildLogCard(
     MapEntry<String, RequestInfo> log,
     Uri uri,
     BuildContext context,
   ) {
-    return Card(
+    return ListTile(
       key: Key(log.key),
-      child: ListTile(
-        leading: Text(log.value.method),
-        title: Text(uri.path),
-        subtitle: Row(
-          children: [
-            Expanded(child: Text(uri.host)),
-            Text(
-              DateTime.now()
-                      .difference(log.value.timeStamp)
-                      .inMinutes
-                      .toString() +
-                  ' Minutes ago',
-            )
-          ],
-        ),
-        onTap: () => setState(() => selectedLog = log),
+      leading: Text(log.value.method),
+      title: Text(uri.path),
+      trailing: Text(
+        DateTime.now().difference(log.value.timeStamp).inMinutes.toString() +
+            ' Minutes ago',
       ),
+      subtitle: Text(uri.host),
+      onTap: () => setState(() => selectedLog = log),
     );
   }
 }
