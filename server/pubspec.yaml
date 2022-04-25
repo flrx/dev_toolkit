@@ -23,7 +23,7 @@ environment:
 dependencies:
   pretty_diff_text: ^1.0.0
   flutter_json_viewer: ^1.0.1
-  vrouter: ^1.2.0+14
+  vrouter: ^1.2.0+21
   dev_toolkit:
     path: ..
 
@@ -33,7 +33,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.4
-  macos_ui: ^0.10.0+1
+  macos_ui: ^0.12.4+3
 
 dev_dependencies:
   flutter_test:

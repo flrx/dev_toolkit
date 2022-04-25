@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:macos_ui/macos_ui.dart';
 
 class ConnectivityPage extends StatefulWidget {
@@ -19,7 +18,7 @@ class _ConnectivityPageState extends State<ConnectivityPage> {
     super.initState();
 
     NetworkInterface.list().then((result) {
-      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         setState(() => list = result);
       });
     });

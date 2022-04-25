@@ -1,4 +1,3 @@
-import 'dart:async' show Timer;
 import 'dart:async';
 import 'dart:io';
 

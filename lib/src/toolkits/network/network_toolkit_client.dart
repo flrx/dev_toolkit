@@ -5,7 +5,7 @@ import 'package:dev_toolkit/src/toolkits/network/network_toolkit_client_request.
 import 'package:uuid/uuid.dart';
 
 class NetworkToolkitClient implements HttpClient {
-  final HttpClient? client;
+  final HttpClient client;
 
   Uuid _uuid = Uuid();
 
@@ -33,11 +33,11 @@ class NetworkToolkitClient implements HttpClient {
     int port,
     String path,
   ) =>
-      withInterceptor(client!.open(method, host, port, path));
+      withInterceptor(client.open(method, host, port, path));
 
   @override
   Future<HttpClientRequest> openUrl(String method, Uri url) =>
-      withInterceptor(client!.openUrl(method, url));
+      withInterceptor(client.openUrl(method, url));
 
   @override
   Future<HttpClientRequest> get(String host, int port, String path) =>
@@ -85,7 +85,7 @@ class NetworkToolkitClient implements HttpClient {
   set authenticate(
     Future<bool> f(Uri url, String scheme, String? realm)?,
   ) =>
-      client!.authenticate = f;
+      client.authenticate = f;
 
   @override
   void addCredentials(
@@ -93,16 +93,16 @@ class NetworkToolkitClient implements HttpClient {
     String realm,
     HttpClientCredentials credentials,
   ) =>
-      client!.addCredentials(url, realm, credentials);
+      client.addCredentials(url, realm, credentials);
 
   @override
-  set findProxy(String f(Uri url)?) => client!.findProxy = f;
+  set findProxy(String f(Uri url)?) => client.findProxy = f;
 
   @override
   set authenticateProxy(
     Future<bool> f(String host, int port, String scheme, String? realm)?,
   ) =>
-      client!.authenticateProxy = f;
+      client.authenticateProxy = f;
 
   @override
   void addProxyCredentials(
@@ -111,24 +111,36 @@ class NetworkToolkitClient implements HttpClient {
     String realm,
     HttpClientCredentials credentials,
   ) =>
-      client!.addProxyCredentials(host, port, realm, credentials);
+      client.addProxyCredentials(host, port, realm, credentials);
 
   @override
   set badCertificateCallback(
     bool callback(X509Certificate cert, String host, int port)?,
   ) =>
-      client!.badCertificateCallback = callback;
+      client.badCertificateCallback = callback;
 
   @override
-  void close({bool force = false}) => client!.close(force: force);
+  void close({bool force = false}) => client.close(force: force);
 
   Future<NetworkToolkitHttpClientRequest> withInterceptor(
     Future<HttpClientRequest> future,
-  ) async {
-    var request = await future;
-
-    NetworkToolkitHttpClientRequest requestWithInterceptor =
-        NetworkToolkitHttpClientRequest(_uuid.v4(), request);
-    return requestWithInterceptor;
+  ) {
+    return future.then(
+      (request) => NetworkToolkitHttpClientRequest(_uuid.v4(), request),
+    );
   }
+
+  @override
+  set connectionFactory(
+    Future<ConnectionTask<Socket>> Function(
+      Uri url,
+      String? proxyHost,
+      int? proxyPort,
+    )?
+        function,
+  ) =>
+      client.connectionFactory = function;
+
+  @override
+  set keyLog(Function(String line)? callback) => client.keyLog = callback;
 }
