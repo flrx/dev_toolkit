@@ -15,9 +15,6 @@ class _NetworkToolkitState extends State<NetworkToolkit> {
   @override
   Widget build(BuildContext context) {
     return MacosScaffold(
-      titleBar: TitleBar(
-        title: Text(selectedLog?.key ?? 'Network Inspector'),
-      ),
       children: [
         ContentArea(builder: (context, scrollController) {
           return StreamBuilder<Map<String, RequestInfo>>(
