@@ -28,9 +28,6 @@ class _ConnectivityPageState extends State<ConnectivityPage> {
   Widget build(BuildContext context) {
     return Material(
       child: MacosScaffold(
-        titleBar: TitleBar(
-          title: Text('Network Interfaces'),
-        ),
         children: [
           ContentArea(
             builder: (BuildContext context, ScrollController scrollController) {

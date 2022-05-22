@@ -60,16 +60,19 @@ class _HomePageState extends State<HomePage> {
       'Home': Icons.home,
       'Redux Inspector': Icons.account_balance_wallet,
       'Network Inspector': Icons.wifi,
-    };
+    }
+        .entries
+        .map((e) => SidebarItem(label: Text(e.key), leading: Icon(e.value)))
+        .toList();
+
     return MacosWindow(
+      titleBar: TitleBar(title: sidebarItems[index].label),
       sidebar: Sidebar(
         builder: (context, scrollController) {
           return SidebarItems(
             currentIndex: index,
             onChanged: (newIndex) => onSidebarClicked(newIndex, context),
-            items: sidebarItems.entries.map((e) {
-              return SidebarItem(label: Text(e.key), leading: Icon(e.value));
-            }).toList(),
+            items: sidebarItems,
           );
         },
         isResizable: true,

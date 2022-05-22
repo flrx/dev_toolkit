@@ -15,9 +15,6 @@ class _ReduxToolkitState extends State<ReduxToolkit> {
   @override
   Widget build(BuildContext context) {
     return MacosScaffold(
-      titleBar: TitleBar(
-        title: Text(selectedLog?.action.type ?? 'Redux Inspector'),
-      ),
       children: [
         ContentArea(
           builder: (context, scrollController) {
